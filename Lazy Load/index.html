@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .lazy-img-list {
+        list-style: none;
+    }
+
+    .lazy-img {
+        width: 200px;
+        height: 200px;
+        border: 1px solid black;
+    }
+</style>
+<body>
+<ul class="lazy-img-list">
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+    <li class="lazy-img"></li>
+</ul>
+<script>
+    // ждем полной загрузки страницы
+    window.onload = () => {
+        // устанавливаем настройки
+        const options = {
+            // родитель целевого элемента - область просмотра
+            root: null,
+            // без отступов
+            rootMargin: '0px',
+            // процент пересечения - половина изображения
+            threshold: 0.5
+        }
+
+        // создаем наблюдатель
+        const observer = new IntersectionObserver((entries, observer) => {
+            // для каждой записи-целевого элемента
+            entries.forEach(entry => {
+                const lazyImg = entry.target
+                // если элемент является наблюдаемым
+                if (entry.isIntersecting) {
+                    // выводим информацию в консоль - проверка работоспособности наблюдателя
+                    console.log(lazyImg)
+                    // меняем фон контейнера
+                    lazyImg.style.background = 'deepskyblue'
+                    // прекращаем наблюдение
+                    // observer.unobserve(lazyImg)
+                }
+                else {
+                    lazyImg.style.background = 'white'
+                }
+            })
+        }, options)
+
+        // с помощью цикла следим за всеми img на странице
+        const arr = document.querySelectorAll('.lazy-img')
+        arr.forEach(i => {
+            observer.observe(i)
+        })
+    }
+</script>
+</body>
+</html>
