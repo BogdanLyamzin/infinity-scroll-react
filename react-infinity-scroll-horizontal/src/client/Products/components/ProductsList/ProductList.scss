@@ -1,0 +1,26 @@
+.product {
+
+  &-container {
+    display: flex;
+    width: 2000px;
+    overflow-x: auto;
+    white-space: nowrap;
+    overflow-y: hidden;
+  }
+
+  &-item {
+    width: 200px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    margin: 15px;
+  }
+
+  &-loading {
+    flex: 0 0 100px;
+    height: 100px;
+    margin: 30px
+  }
+}

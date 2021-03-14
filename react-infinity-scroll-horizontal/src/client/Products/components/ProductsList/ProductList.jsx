@@ -1,82 +1,74 @@
 import React, { Component } from "react";
 
+import "./ProductList.scss";
+
 class ProductList extends Component {
     constructor() {
         super();
         this.state = {
             photos: [],
             loading: false,
-            page: 0,
-            prevY: 0
+            limit: 10,
+            prevX: 0
         };
         this.loadingRef = React.createRef();
+        this.rootRef = React.createRef();
     }
 
     componentDidMount() {
-        this.getPhotos(this.state.page);
+        this.getPhotos(this.state.limit);
 
         const options = {
             root: null,
             rootMargin: "0px",
-            threshold: 1.0
+            threshold: 1.0 // при полном пересечении срабатывает IntersectionObserver
         };
 
         this.observer = new IntersectionObserver(
             this.handleObserver.bind(this),
             options
         );
+
         this.observer.observe(this.loadingRef);
     }
 
     handleObserver(entities, observer) {
-        console.log(entities)
-        const y = entities[0].boundingClientRect.y;
-        if (this.state.prevY > y) {
-            const lastPhoto = this.state.photos[this.state.photos.length - 1];
-            const curPage = lastPhoto.albumId;
-            this.getPhotos(curPage);
-            this.setState({ page: curPage });
+        const x = entities[0].boundingClientRect.x;
+        if (this.state.prevX > x) {
+            this.getPhotos(this.state.limit + 10);
+            this.setState({ limit: this.state.limit + 10 });
         }
-        this.setState({ prevY: y });
+        this.setState({ prevX: x });
     }
 
-    getPhotos(page) {
+    getPhotos(limit) {
         this.setState({ loading: true });
         fetch(
-                `https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=10`
+                `https://jsonplaceholder.typicode.com/photos?_page=1&_limit=${limit}`
             )
             .then(res => res.json())
             .then(result => {
-                this.setState({ photos: [...this.state.photos, ...result] });
+                this.setState({ photos: [...result] });
                 this.setState({ loading: false });
             });
     }
 
     render() {
 
-        // Additional css
-        const loadingCSS = {
-            height: "100px",
-            margin: "30px"
-        };
-
         // To change the loading icon behavior
         const loadingTextCSS = { display: this.state.loading ? "block" : "none" };
 
-        const photoElements = this.state.photos.map(user => (
-            <div>
-                <img src={user.url} height="100px" width="200px" />
+        const photoElements = this.state.photos.map(({id}) => (
+            <div className="product-item" key={id}>
+                {id}
             </div>
         ));
 
         return (
-            <div className="container">
-                <div style={{ minHeight: "800px" }}>
+            <div ref={rootRef => (this.rootRef = rootRef)} className="product-container">
                     {photoElements}
-                </div>
-                <div
+                <div className="product-loading"
                     ref={loadingRef => (this.loadingRef = loadingRef)}
-                    style={loadingCSS}
                 >
                     <span style={loadingTextCSS}>Loading...</span>
                 </div>
